@@ -1,0 +1,33 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <div style="padding: 10px;"></div>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'index' %}">
+                {% csrf_token %}
+                {{form.post_content}}
+                <div style="padding: 5px;"></div>
+                <div style="text-align: center;"><button class="btn btn-primary" type="submit">Post</button></div>
+            </form>
+        {% endif %}
+        <hr>
+        {% for post in posts %}
+            <div class="container">
+                <div class="row">
+                    <div class="col allPostUsername">{{ post.user }}</div>
+                    <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
+                </div>
+                <div class="row">
+                    <div class="col">{{ post.post_content }}</div>
+                </div>
+                <div class="row">
+                    <div class="col">Likes: {{ post.likes.all.count}}</div>
+                </div>
+                
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+    
+{% endblock %}

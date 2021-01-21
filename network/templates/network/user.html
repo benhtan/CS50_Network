@@ -1,0 +1,10 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <div>{{ user.username }}</div>
+        <div>Followers: </div>
+        <div>Following: {{ user.following.all.count }}</div>
+    </div>
+    
+{% endblock %}

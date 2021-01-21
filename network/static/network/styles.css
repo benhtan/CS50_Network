@@ -1,0 +1,9 @@
+.allPostUsername {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.allPostTimestamp {
+    color: grey;
+    font-size: smaller;
+}
