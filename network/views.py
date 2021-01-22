@@ -23,6 +23,7 @@ def follow_unfollow(request):
     logged_in_user = User.objects.get(username = data['logged_in_user'])
     user_profile = User.objects.get(username = data['user_profile'])
 
+    # decide text on button
     if request.method == 'PUT':
         if user_profile in logged_in_user.following.all():
             print('logged in user IS following user profile')

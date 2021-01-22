@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+//  set the right text for unfollow/follow button
 function follow_unfollow_btn_text() {
     // get the username of logged in user
     const logged_in_user = document.querySelector('#logged_in_user').innerHTML;
@@ -42,6 +43,27 @@ function follow_unfollow_btn_text() {
 
 function follow_unfollow() {
     console.log('follow/unfollow button clicked')
+    // get the username of logged in user
+    const logged_in_user = document.querySelector('#logged_in_user').innerHTML;
+
+    // get the username of the profile the logged in user is vieweing
+    const user_profile = document.querySelector('#user_profile').innerHTML;
+
+    // get csrf token
+    const csrftoken = getCookie('csrftoken');
+
+    // fetch
+    fetch('/follow_unfollow', {
+        method: 'POST',
+        headers: { "X-CSRFToken": csrftoken },
+        body: JSON.stringify({
+            logged_in_user: logged_in_user,
+            user_profile: user_profile
+        })
+    })
+    .catch(error => {
+        console.log('Error: ', error);
+    });
 }
 
 function getCookie(name) {
