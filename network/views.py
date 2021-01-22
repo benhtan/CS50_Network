@@ -15,22 +15,30 @@ def follow_unfollow(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Log In Required"}, status=400)
 
-    if request.method == 'GET':
-        return JsonResponse({"error": "PUT/POST Required"}, status=400)
-    
-    data = json.loads(request.body)
+    if request.method == 'PUT' or request.method == 'POST':
+        data = json.loads(request.body)
 
-    logged_in_user = User.objects.get(username = data['logged_in_user'])
-    user_profile = User.objects.get(username = data['user_profile'])
+        logged_in_user = User.objects.get(username = data['logged_in_user'])
+        user_profile = User.objects.get(username = data['user_profile'])
 
-    # decide text on button
-    if request.method == 'PUT':
+        # decide button text. if POST, then follow/unfollow from database
         if user_profile in logged_in_user.following.all():
-            print('logged in user IS following user profile')
-            return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'})
+            #print('logged in user IS following user profile')
+            if request.method == 'POST':
+                logged_in_user.following.remove(user_profile)
+                return JsonResponse({"message": "Success. User profile unfollowed"}, status=200)
+
+            return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'}) # ran executed if request is PUT
+
         else:
-            print('logged in user NOT following user profile')
-            return JsonResponse({'follow_unfollow_btn_text': 'Follow'})
+            #print('logged in user NOT following user profile')
+            if request.method == 'POST':
+                logged_in_user.following.add(user_profile)
+                return JsonResponse({"message": "Success. User profile followed"}, status=200)
+
+            return JsonResponse({'follow_unfollow_btn_text': 'Follow'}) # ran executed if request is PUT
+    else:
+        return JsonResponse({"error": "PUT/POST Required"}, status=400)
 
 def user_profile(request, username):
     if not request.user.is_authenticated:
