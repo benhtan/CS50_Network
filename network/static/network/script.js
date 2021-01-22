@@ -1,11 +1,11 @@
 console.log('script running')
 
 document.addEventListener('DOMContentLoaded', function() {
-    follow_unfollow_btn = document.querySelector('#follow_unfollow_btn');
+    const follow_unfollow_btn = document.querySelector('#follow_unfollow_btn');
     if (follow_unfollow_btn === null) {
         console.log('follow_unfollow_btn not found')
     } else {
-        follow_unfollow_btn.innerHTML = follow_unfollow_btn_text();
+        follow_unfollow_btn_text();
         follow_unfollow_btn.onclick = follow_unfollow;
     }
 
@@ -17,7 +17,6 @@ function follow_unfollow_btn_text() {
 
     // get the username of the profile the logged in user is vieweing
     const user_profile = document.querySelector('#user_profile').innerHTML;
-    // console.log(logged_in_user + ' ' + user_profile)
 
     // get csrf token
     const csrftoken = getCookie('csrftoken');
@@ -30,9 +29,15 @@ function follow_unfollow_btn_text() {
             logged_in_user: logged_in_user,
             user_profile: user_profile
         })
+    })
+    .then(response => response.json())
+    .then(json => {
+        // console.log(json)
+        document.querySelector('#follow_unfollow_btn').innerHTML = json.follow_unfollow_btn_text
+    })
+    .catch(error => {
+        console.log('Error: ', error);
     });
-
-    return 'Follow/Unfollow'
 }
 
 function follow_unfollow() {

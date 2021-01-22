@@ -19,7 +19,7 @@
             <div>Followers: {{ followers.count }}</div>
             <div>Following: {{ user_profile.following.all.count }}</div>
             {% if user.username != user_profile.username %}
-                <button class="btn btn-primary" id="follow_unfollow_btn">Follow/Unfollow</button>
+                <button class="btn btn-primary" id="follow_unfollow_btn">NA</button>
             {% endif %}
             
         {% endif %}

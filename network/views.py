@@ -15,18 +15,15 @@ def follow_unfollow(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Log In Required"}, status=400)
 
+    if request.method == 'GET':
+        return JsonResponse({"error": "PUT/POST Required"}, status=400)
+    
+    data = json.loads(request.body)
+
+    logged_in_user = User.objects.get(username = data['logged_in_user'])
+    user_profile = User.objects.get(username = data['user_profile'])
+
     if request.method == 'PUT':
-        #print('in follow unfollow')
-
-        data = json.loads(request.body)
-
-        #print(data)
-        #print(data['logged_in_user'])
-
-        logged_in_user = User.objects.get(username = data['logged_in_user'])
-        user_profile = User.objects.get(username = data['user_profile'])
-        #print(logged_in_user.following.all())
-
         if user_profile in logged_in_user.following.all():
             print('logged in user IS following user profile')
             return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'})
