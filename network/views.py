@@ -1,23 +1,37 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+import json
 
 from .models import User, Post, PostForm
 
 from .helpers import duration
 
-def user(request, username):
+def follow_unfollow(request):
+    pass
+
+def user_profile(request, username):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
     try:
         user_obj = User.objects.get(username=username)
+        followers = user_obj.followers.all()
+        user_posts = Post.objects.filter(user = user_obj)
+        #print(followers)
+        #print(user_posts)
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse("index"))
     except:
         pass
     
-    return render(request, "network/user.html", {
-        'user': user_obj,
+    return render(request, "network/index.html", {
+        'user_profile': user_obj,
+        'followers': followers,
+        'posts': user_posts,
     })
 
 def index(request):

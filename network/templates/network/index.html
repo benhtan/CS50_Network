@@ -3,7 +3,8 @@
 {% block body %}
     <div class="container">
         <div style="padding: 10px;"></div>
-        {% if user.is_authenticated %}
+        <!-- if this is not a user profile request then show post form -->
+        {% if user.is_authenticated and not user_profile %}
             <form method="post" action="{% url 'index' %}">
                 {% csrf_token %}
                 {{form.post_content}}
@@ -11,11 +12,24 @@
                 <div style="text-align: center;"><button class="btn btn-primary" type="submit">Post</button></div>
             </form>
         {% endif %}
+        
+        <!-- if this is a user profile request, then show user profile details -->
+        {% if user.is_authenticated and user_profile %}
+            <div>{{ user_profile.username }}</div>
+            <div>Followers: {{ followers.count }}</div>
+            <div>Following: {{ user_profile.following.all.count }}</div>
+            {% if user.username != user_profile.username %}
+                <button class="btn btn-primary" id="follow_unfollow_btn">Follow/Unfollow</button>
+            {% endif %}
+            
+        {% endif %}
+
         <hr>
+
         {% for post in posts %}
             <div class="container">
                 <div class="row">
-                    <div class="col allPostUsername">{{ post.user }}</div>
+                    <div class="col allPostUsername"><a href="{% url 'user' post.user %}">{{ post.user }}</a></div>
                     <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
                 </div>
                 <div class="row">
