@@ -20,13 +20,15 @@ def follow_unfollow(request):
 
         logged_in_user = User.objects.get(username = data['logged_in_user'])
         user_profile = User.objects.get(username = data['user_profile'])
+        
 
         # decide button text. if POST, then follow/unfollow from database
         if user_profile in logged_in_user.following.all():
             #print('logged in user IS following user profile')
             if request.method == 'POST':
                 logged_in_user.following.remove(user_profile)
-                return JsonResponse({"message": "Success. User profile unfollowed"}, status=200)
+                followers = user_profile.followers.count()
+                return JsonResponse({'message': 'Success. User profile unfollowed', 'followers': str(followers)}, status=200)
 
             return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'}) # ran executed if request is PUT
 
@@ -34,7 +36,8 @@ def follow_unfollow(request):
             #print('logged in user NOT following user profile')
             if request.method == 'POST':
                 logged_in_user.following.add(user_profile)
-                return JsonResponse({"message": "Success. User profile followed"}, status=200)
+                followers = user_profile.followers.count()
+                return JsonResponse({'message': 'Success. User profile followed', 'followers': str(followers)}, status=200)
 
             return JsonResponse({'follow_unfollow_btn_text': 'Follow'}) # ran executed if request is PUT
     else:

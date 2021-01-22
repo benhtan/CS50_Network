@@ -16,7 +16,7 @@
         <!-- if this is a user profile request, then show user profile details -->
         {% if user.is_authenticated and user_profile %}
             <div id="user_profile">{{ user_profile.username }}</div>
-            <div>Followers: {{ followers.count }}</div>
+            <div>Followers: <span id="followers_count">{{ followers.count }}</span></div>
             <div>Following: {{ user_profile.following.all.count }}</div>
             {% if user.username != user_profile.username %}
                 <button class="btn btn-primary" id="follow_unfollow_btn">NA</button>

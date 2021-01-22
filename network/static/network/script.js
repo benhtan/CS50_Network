@@ -66,10 +66,13 @@ function follow_unfollow() {
     })
     .then(response => response.json())
     .then(json => {
-        console.log(json.message)
-        
-        // update text when button is clicked
+        console.log(json)
+
+        // update text when button
         follow_unfollow_btn_text();
+
+        // update followers count
+        document.querySelector('#followers_count').innerHTML = json.followers;
     })
     .catch(error => {
         console.log('Error: ', error);
