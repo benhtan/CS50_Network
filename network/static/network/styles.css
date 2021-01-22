@@ -7,3 +7,7 @@
     color: grey;
     font-size: smaller;
 }
+
+#logged_in_user {
+    font-weight: bold;
+}

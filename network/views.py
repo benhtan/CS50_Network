@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -11,7 +12,27 @@ from .models import User, Post, PostForm
 from .helpers import duration
 
 def follow_unfollow(request):
-    pass
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Log In Required"}, status=400)
+
+    if request.method == 'PUT':
+        #print('in follow unfollow')
+
+        data = json.loads(request.body)
+
+        #print(data)
+        #print(data['logged_in_user'])
+
+        logged_in_user = User.objects.get(username = data['logged_in_user'])
+        user_profile = User.objects.get(username = data['user_profile'])
+        #print(logged_in_user.following.all())
+
+        if user_profile in logged_in_user.following.all():
+            print('logged in user IS following user profile')
+            return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'})
+        else:
+            print('logged in user NOT following user profile')
+            return JsonResponse({'follow_unfollow_btn_text': 'Follow'})
 
 def user_profile(request, username):
     if not request.user.is_authenticated:
