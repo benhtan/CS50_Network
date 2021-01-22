@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //  set the right text for unfollow/follow button
 function follow_unfollow_btn_text() {
+    console.log('updating follow/unfollow button text')
+
     // get the username of logged in user
     const logged_in_user = document.querySelector('#logged_in_user').innerHTML;
 
@@ -41,6 +43,7 @@ function follow_unfollow_btn_text() {
     });
 }
 
+// follow/unfollow in database
 function follow_unfollow() {
     console.log('follow/unfollow button clicked')
     // get the username of logged in user
@@ -61,9 +64,18 @@ function follow_unfollow() {
             user_profile: user_profile
         })
     })
+    .then(response => response.json())
+    .then(json => {
+        console.log(json.message)
+        
+        // update text when button is clicked
+        follow_unfollow_btn_text();
+    })
     .catch(error => {
         console.log('Error: ', error);
     });
+
+    
 }
 
 function getCookie(name) {
