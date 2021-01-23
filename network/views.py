@@ -6,10 +6,25 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 import json
+from django.core.paginator import Paginator
 
 from .models import User, Post, PostForm
 
 from .helpers import duration
+
+def following(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("index"))
+    
+    # query list of user that logged in user is following
+    following = request.user.following.all()
+    # get posts only from following list
+    posts = Post.objects.filter(user__in=following).order_by('-edited_timestamp')
+
+    return render(request, "network/index.html", {
+        'posts': posts,
+    })
+
 
 def follow_unfollow(request):
     if not request.user.is_authenticated:
@@ -47,6 +62,7 @@ def user_profile(request, username):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
+    # Get the user object with specified username
     try:
         user_obj = User.objects.get(username=username)
         followers = user_obj.followers.all()
@@ -54,6 +70,7 @@ def user_profile(request, username):
         #print(followers)
         #print(user_posts)
     except User.DoesNotExist:
+        # if user does not exist, then show index
         return HttpResponseRedirect(reverse("index"))
     except:
         pass
@@ -87,16 +104,46 @@ def index(request):
         #print(post.likes)
         duration_dict[post.id] = duration(post.edited_timestamp)
 
-
+    # generate post form
     form = PostForm()
+
+    # paginate posts
+    posts_paginated = Paginator(posts,5)
+
+    # get requested page number from URL. User clicked prev/next button if not None
+    pg = request.GET.get('pg') # returns None if no pg in URL
+
+    # decide if we should display page 1 or not
+    if pg == None:
+        pg = 1
+    else:
+        pg = int(pg)
+
+    # decide if there is a prev/next button
+    pg_prev = None
+    pg_next = None
+
+    if posts_paginated.page(pg).has_previous():
+        pg_prev = pg - 1
+    
+    if posts_paginated.page(pg).has_next():
+        pg_next = pg + 1
+
+
+
     return render(request, "network/index.html", {
         'form': form,
-        'posts': posts,
+        'posts': posts_paginated.page(pg),
         'durations': duration_dict,
+        'pg_prev': pg_prev,
+        'pg_next': pg_next,
     })
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("index"))
+
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -122,6 +169,9 @@ def logout_view(request):
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("index"))
+
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]

@@ -7,7 +7,7 @@ from django.forms import ModelForm, Textarea
 class User(AbstractUser):
     following = models.ManyToManyField('self', blank=True, related_name='followers', symmetrical=False)
     def __str__(self):
-        return f"{self.username}"
+        return f"{self.id}: {self.username}"
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

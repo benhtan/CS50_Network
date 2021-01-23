@@ -4,7 +4,7 @@
     <div class="container">
         <div style="padding: 10px;"></div>
         <!-- if this is not a user profile request then show post form -->
-        {% if user.is_authenticated and not user_profile %}
+        {% if user.is_authenticated and not user_profile and form %}
             <form method="post" action="{% url 'index' %}">
                 {% csrf_token %}
                 {{form.post_content}}
@@ -21,7 +21,6 @@
             {% if user.username != user_profile.username %}
                 <button class="btn btn-primary" id="follow_unfollow_btn">NA</button>
             {% endif %}
-            
         {% endif %}
 
         <hr>
@@ -29,7 +28,7 @@
         {% for post in posts %}
             <div class="container">
                 <div class="row">
-                    <div class="col allPostUsername"><a href="{% url 'user' post.user %}">{{ post.user }}</a></div>
+                    <div class="col allPostUsername"><a href="{% url 'user' post.user.username %}">{{ post.user.username }}</a></div>
                     <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
                 </div>
                 <div class="row">
@@ -42,6 +41,16 @@
             </div>
             <hr>
         {% endfor %}
+
+        <!-- pagination -->
+        {% if pg_prev or pg_next %}
+            <nav aria-label="page navigation">
+                <ul class="pagination">
+                    <li class="page-item {% if not pg_prev %} disabled {% endif %}"><a class="page-link" href="/?pg={{ pg_prev }}">Prev</a></li>
+                    <li class="page-item {% if not pg_next %} disabled {% endif %}"><a class="page-link" href="/?pg={{ pg_next }}">Next</a></li>
+                </ul>
+            </nav>
+        {% endif %}
     </div>
     
 {% endblock %}
