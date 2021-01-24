@@ -12,6 +12,24 @@ from .models import User, Post, PostForm
 
 from .helpers import duration, paginate_post
 
+def edit_save(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Log In Required"}, status=403)
+    
+    if request.method != 'PUT':
+        return JsonResponse({"error": "PUT Required"}, status=405)
+    
+    data = json.loads(request.body)
+
+    post_obj = Post.objects.get(pk = data['postid'])
+
+    if request.user != post_obj.user:
+        return JsonResponse({"error": "Non owner of post trying to edit"}, status=403)
+
+
+    return JsonResponse({'message': 'Success.'}, status=200)
+
+
 def following(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("index"))
@@ -32,7 +50,7 @@ def following(request):
 
 def follow_unfollow(request):
     if not request.user.is_authenticated:
-        return JsonResponse({"error": "Log In Required"}, status=400)
+        return JsonResponse({"error": "Log In Required"}, status=403)
 
     if request.method == 'PUT' or request.method == 'POST':
         data = json.loads(request.body)
@@ -60,7 +78,7 @@ def follow_unfollow(request):
 
             return JsonResponse({'follow_unfollow_btn_text': 'Follow'}) # ran executed if request is PUT
     else:
-        return JsonResponse({"error": "PUT/POST Required"}, status=400)
+        return JsonResponse({"error": "PUT/POST Required"}, status=405)
 
 def user_profile(request, username):
     if not request.user.is_authenticated:

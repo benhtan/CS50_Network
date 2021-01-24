@@ -9,15 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
         follow_unfollow_btn.onclick = follow_unfollow;
     }
 
+    edit_link_listener();
+
+});
+
+// function to add event listener for all edit links
+function edit_link_listener() {
     document.querySelectorAll('#edit_post_link').forEach(link => {
         link.addEventListener('click', function() {
             // console.log(this.dataset.postid);
             edit_post(this);
         });
     });
-
-
-});
+}
 
 // function to edit post
 function edit_post(link) {
@@ -47,10 +51,12 @@ function edit_post(link) {
 
     //remove edit link
     const edit_div = document.querySelector('#edit_div' + postid);
+    const original_edit_div = edit_div.innerHTML;
     edit_div.innerHTML = '';
 
     // create save link
     const save_link = document.createElement('a'); save_link.innerHTML = 'Save'; save_link.href = '#';
+    save_link.onclick = function() {return false;};
     edit_div.append(save_link);
 
     // create cancel link
@@ -59,8 +65,37 @@ function edit_post(link) {
     cancel_link.onclick = function() {return false;};
     edit_div.append(cancel_link);
 
+    // event listener when cancel link is clicked
     cancel_link.addEventListener('click', function() {
-        console.log('cancel button clicked');
+        console.log('cancel link clicked');
+        content_row.innerHTML = original_content_row;
+        edit_div.innerHTML = original_edit_div;
+        edit_link_listener();
+    });
+
+    // event listener when save is clicked
+    save_link.addEventListener('click', function() {
+
+        // get csrf token
+        const csrftoken = getCookie('csrftoken');
+
+        // fetch
+        fetch('/edit_save', {
+            method: 'PUT',
+            headers: { "X-CSRFToken": csrftoken },
+            body: JSON.stringify({
+                postid: postid,
+                new_content: textarea.value
+            })
+        })
+        .then(response => {
+            const json = response.json().then(json => {return json;})
+            console.log(json);            
+            console.log(response.ok);
+        })
+        .catch(error => {
+            console.log('Error: ', error);
+        });
     });
 }
 
