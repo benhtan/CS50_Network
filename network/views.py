@@ -69,7 +69,7 @@ def follow_unfollow(request):
                 followers = user_profile.followers.count()
                 return JsonResponse({'message': 'Success. User profile unfollowed', 'followers': str(followers)}, status=200)
 
-            return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'}) # ran executed if request is PUT
+            return JsonResponse({'follow_unfollow_btn_text': 'Unfollow'}, status = 200) # ran executed if request is PUT
 
         else:
             #print('logged in user NOT following user profile')
@@ -78,7 +78,7 @@ def follow_unfollow(request):
                 followers = user_profile.followers.count()
                 return JsonResponse({'message': 'Success. User profile followed', 'followers': str(followers)}, status=200)
 
-            return JsonResponse({'follow_unfollow_btn_text': 'Follow'}) # ran executed if request is PUT
+            return JsonResponse({'follow_unfollow_btn_text': 'Follow'}, status = 200) # ran executed if request is PUT
     else:
         return JsonResponse({"error": "PUT/POST Required"}, status=405)
 
