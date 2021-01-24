@@ -37,6 +37,7 @@ function edit_post(link) {
 
     // save the original post content
     const original_post = content_div.innerHTML;
+    console.log(original_post);
 
     // create a text area filled with the original post content
     const textarea = document.createElement('textarea'); 
@@ -70,7 +71,11 @@ function edit_post(link) {
         console.log('cancel link clicked');
         content_row.innerHTML = original_content_row;
         edit_div.innerHTML = original_edit_div;
-        edit_link_listener();
+        link = edit_div.children[0]
+        link.addEventListener('click', function() {
+            // console.log(this.dataset.postid);
+            edit_post(this);
+        });
     });
 
     // event listener when save is clicked
@@ -94,7 +99,11 @@ function edit_post(link) {
                 content_row.innerHTML = original_content_row;                
                 edit_div.innerHTML = original_edit_div;
                 document.querySelector('#post' + postid).innerHTML = content;
-                edit_link_listener();
+                link = edit_div.children[0]
+                link.addEventListener('click', function() {
+                    // console.log(this.dataset.postid);
+                    edit_post(this);
+                });
             }
             else {
                 console.log(response.json());
