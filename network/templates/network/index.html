@@ -32,10 +32,14 @@
                     <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
                 </div>
                 <div class="row">
-                    <div class="col">{{ post.post_content }}</div>
+                    <div class="col" id="post{{post.id}}">{{ post.post_content }}</div>
                 </div>
                 <div class="row">
                     <div class="col">Likes: {{ post.likes.all.count}}</div>
+                
+                {% if post.user == user %}
+                        <div class="col"><a href="#" onclick="return false;" id="edit_post_link" data-postid="{{post.id}}">Edit</a></div>
+                {% endif %}
                 </div>
                 
             </div>
@@ -43,11 +47,12 @@
         {% endfor %}
 
         <!-- pagination -->
-        {% if pg_prev or pg_next %}
+        {% if p.pg_prev or p.pg_next %}
             <nav aria-label="page navigation">
                 <ul class="pagination">
-                    <li class="page-item {% if not pg_prev %} disabled {% endif %}"><a class="page-link" href="/?pg={{ pg_prev }}">Prev</a></li>
-                    <li class="page-item {% if not pg_next %} disabled {% endif %}"><a class="page-link" href="/?pg={{ pg_next }}">Next</a></li>
+                    <li class="page-item {% if not p.pg_prev %} disabled {% endif %}"><a class="page-link" href="?pg={{ p.pg_prev }}">Prev</a></li>
+                    <li class="page-item disabled"><a class="page-link">{{ p.pg_index }}</a></li>
+                    <li class="page-item {% if not p.pg_next %} disabled {% endif %}"><a class="page-link" href="?pg={{ p.pg_next }}">Next</a></li>             
                 </ul>
             </nav>
         {% endif %}

@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.utils.timezone import now, get_current_timezone_name, get_default_timezone_name, get_default_timezone
+from django.core.paginator import Paginator
 
 # Calculate delta time between now and models.DateTimeField
 # returns string of delta time in year, month, day, min or sec
@@ -45,4 +46,32 @@ def duration(dateTime):
     else:
         return 'just now'
 
+# function takes in objects of Post and which page of paginator should be displayed
+# function returns paginated objects of Post, page should be displayed, previous page, next page and page index (1 of 3) as a dictionary
+def paginate_post(posts, pg):
+    # paginate posts
+    posts_paginated = Paginator(posts,3)
+
+    # decide if we should display page 1 or not
+    if pg == None:
+        pg = 1
+    else:
+        pg = int(pg)
+
+    # decide if there is a prev/next button
+    pg_prev = None
+    pg_next = None
+
+    if posts_paginated.page(pg).has_previous():
+        pg_prev = pg - 1
     
+    if posts_paginated.page(pg).has_next():
+        pg_next = pg + 1
+    
+    return {
+        'posts_paginated': posts_paginated,
+        'pg': pg,
+        'pg_prev': pg_prev,
+        'pg_next': pg_next,
+        'pg_index': f'{pg} of {posts_paginated.num_pages}',
+    }

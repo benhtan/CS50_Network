@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 
 from .models import User, Post, PostForm
 
-from .helpers import duration
+from .helpers import duration, paginate_post
 
 def following(request):
     if not request.user.is_authenticated:
@@ -21,8 +21,12 @@ def following(request):
     # get posts only from following list
     posts = Post.objects.filter(user__in=following).order_by('-edited_timestamp')
 
+    # paginate post
+    p = paginate_post(posts, request.GET.get('pg'))
+
     return render(request, "network/index.html", {
-        'posts': posts,
+        'posts': p['posts_paginated'].page(p['pg']),
+        'p': p,
     })
 
 
@@ -66,7 +70,7 @@ def user_profile(request, username):
     try:
         user_obj = User.objects.get(username=username)
         followers = user_obj.followers.all()
-        user_posts = Post.objects.filter(user = user_obj)
+        posts = Post.objects.filter(user = user_obj).order_by('-edited_timestamp')
         #print(followers)
         #print(user_posts)
     except User.DoesNotExist:
@@ -74,11 +78,15 @@ def user_profile(request, username):
         return HttpResponseRedirect(reverse("index"))
     except:
         pass
+
+    # paginate post
+    p = paginate_post(posts, request.GET.get('pg'))
     
     return render(request, "network/index.html", {
         'user_profile': user_obj,
         'followers': followers,
-        'posts': user_posts,
+        'posts': p['posts_paginated'].page(p['pg']),
+        'p': p,
     })
 
 def index(request):
@@ -107,36 +115,14 @@ def index(request):
     # generate post form
     form = PostForm()
 
-    # paginate posts
-    posts_paginated = Paginator(posts,5)
-
-    # get requested page number from URL. User clicked prev/next button if not None
-    pg = request.GET.get('pg') # returns None if no pg in URL
-
-    # decide if we should display page 1 or not
-    if pg == None:
-        pg = 1
-    else:
-        pg = int(pg)
-
-    # decide if there is a prev/next button
-    pg_prev = None
-    pg_next = None
-
-    if posts_paginated.page(pg).has_previous():
-        pg_prev = pg - 1
-    
-    if posts_paginated.page(pg).has_next():
-        pg_next = pg + 1
-
-
+    # paginate post
+    p = paginate_post(posts, request.GET.get('pg'))
 
     return render(request, "network/index.html", {
         'form': form,
-        'posts': posts_paginated.page(pg),
+        'posts': p['posts_paginated'].page(p['pg']),
         'durations': duration_dict,
-        'pg_prev': pg_prev,
-        'pg_next': pg_next,
+        'p': p,
     })
 
 

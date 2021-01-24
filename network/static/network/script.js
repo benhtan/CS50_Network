@@ -9,7 +9,36 @@ document.addEventListener('DOMContentLoaded', function() {
         follow_unfollow_btn.onclick = follow_unfollow;
     }
 
+    document.querySelectorAll('#edit_post_link').forEach(link => {
+        link.addEventListener('click', function() {
+            // console.log(this.dataset.postid);
+            edit_post(this);
+        });
+    });
+
+
 });
+
+// function to edit post
+function edit_post(link) {
+    const postid = link.dataset.postid
+    console.log('edit button clicked for postid ' + postid);
+    
+    // find the div of interest
+    const content_div = document.querySelector('#post' + postid);
+
+    // save the original post content
+    const original_post = content_div.innerHTML;
+
+    // create a text area filled with the original post content
+    const textarea = document.createElement('textarea'); textarea.className = 'form-control'; textarea.value = original_post;
+
+    // empty the content of div
+    content_div.innerHTML = '';
+
+    // append the text area to div
+    content_div.append(textarea);
+}
 
 //  set the right text for unfollow/follow button
 function follow_unfollow_btn_text() {
