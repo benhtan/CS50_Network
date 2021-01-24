@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function edit_post(link) {
     const postid = link.dataset.postid
     console.log('edit button clicked for postid ' + postid);
+
+    // find the content row
+    const content_row = document.querySelector('#content_row' + postid);
+    const original_content_row = content_row.innerHTML;
     
     // find the div of interest
     const content_div = document.querySelector('#post' + postid);
@@ -31,13 +35,33 @@ function edit_post(link) {
     const original_post = content_div.innerHTML;
 
     // create a text area filled with the original post content
-    const textarea = document.createElement('textarea'); textarea.className = 'form-control'; textarea.value = original_post;
+    const textarea = document.createElement('textarea'); 
+    textarea.className = 'form-control'; textarea.value = original_post; 
+    textarea.maxLength = '280'; textarea.style = 'height: 5em; width: 100%;';
 
     // empty the content of div
     content_div.innerHTML = '';
 
     // append the text area to div
     content_div.append(textarea);
+
+    //remove edit link
+    const edit_div = document.querySelector('#edit_div' + postid);
+    edit_div.innerHTML = '';
+
+    // create save link
+    const save_link = document.createElement('a'); save_link.innerHTML = 'Save'; save_link.href = '#';
+    edit_div.append(save_link);
+
+    // create cancel link
+    const cancel_link = document.createElement('a'); cancel_link.innerHTML = 'Cancel'; 
+    cancel_link.href = '#'; cancel_link.style = 'padding-left: 1em;';
+    cancel_link.onclick = function() {return false;};
+    edit_div.append(cancel_link);
+
+    cancel_link.addEventListener('click', function() {
+        console.log('cancel button clicked');
+    });
 }
 
 //  set the right text for unfollow/follow button

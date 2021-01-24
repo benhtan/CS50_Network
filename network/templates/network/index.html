@@ -31,14 +31,14 @@
                     <div class="col allPostUsername"><a href="{% url 'user' post.user.username %}">{{ post.user.username }}</a></div>
                     <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
                 </div>
-                <div class="row">
+                <div class="row" id="content_row{{post.id}}">
                     <div class="col" id="post{{post.id}}">{{ post.post_content }}</div>
                 </div>
                 <div class="row">
                     <div class="col">Likes: {{ post.likes.all.count}}</div>
                 
                 {% if post.user == user %}
-                        <div class="col"><a href="#" onclick="return false;" id="edit_post_link" data-postid="{{post.id}}">Edit</a></div>
+                        <div class="col" id="edit_div{{post.id}}"><a href="#" onclick="return false;" id="edit_post_link" data-postid="{{post.id}}">Edit</a></div>
                 {% endif %}
                 </div>
                 
