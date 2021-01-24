@@ -26,7 +26,7 @@ function edit_link_listener() {
 // function to edit post
 function edit_post(link) {
     const postid = link.dataset.postid
-    console.log('edit button clicked for postid ' + postid);
+    //console.log('edit button clicked for postid ' + postid);
 
     // find the content row
     const content_row = document.querySelector('#content_row' + postid);
@@ -37,7 +37,6 @@ function edit_post(link) {
 
     // save the original post content
     const original_post = content_div.innerHTML;
-    console.log(original_post);
 
     // create a text area filled with the original post content
     const textarea = document.createElement('textarea'); 
@@ -68,12 +67,16 @@ function edit_post(link) {
 
     // event listener when cancel link is clicked
     cancel_link.addEventListener('click', function() {
-        console.log('cancel link clicked');
+        //console.log('cancel link clicked');
+        // reset to just displaying text
         content_row.innerHTML = original_content_row;
+
+        // reset link to be edit
         edit_div.innerHTML = original_edit_div;
+
+        // add event listener to edit link
         link = edit_div.children[0]
         link.addEventListener('click', function() {
-            // console.log(this.dataset.postid);
             edit_post(this);
         });
     });
@@ -95,13 +98,17 @@ function edit_post(link) {
         })
         .then(response => {
             if (response.ok) {
+                // reset to just displaying text
                 const content = textarea.value;
-                content_row.innerHTML = original_content_row;                
-                edit_div.innerHTML = original_edit_div;
+                content_row.innerHTML = original_content_row;    
                 document.querySelector('#post' + postid).innerHTML = content;
-                link = edit_div.children[0]
+                
+                // change the link back to edit
+                edit_div.innerHTML = original_edit_div;
+                
+                // add event listener to the edit link
+                link = edit_div.children[0];
                 link.addEventListener('click', function() {
-                    // console.log(this.dataset.postid);
                     edit_post(this);
                 });
             }
