@@ -26,6 +26,8 @@ def edit_save(request):
     if request.user != post_obj.user:
         return JsonResponse({"error": "Non owner of post trying to edit"}, status=403)
 
+    post_obj.post_content = data['new_content']
+    post_obj.save()
 
     return JsonResponse({'message': 'Success.'}, status=200)
 

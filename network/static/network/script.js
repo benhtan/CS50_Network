@@ -89,9 +89,16 @@ function edit_post(link) {
             })
         })
         .then(response => {
-            const json = response.json().then(json => {return json;})
-            console.log(json);            
-            console.log(response.ok);
+            if (response.ok) {
+                const content = textarea.value;
+                content_row.innerHTML = original_content_row;                
+                edit_div.innerHTML = original_edit_div;
+                document.querySelector('#post' + postid).innerHTML = content;
+                edit_link_listener();
+            }
+            else {
+                console.log(response.json());
+            }
         })
         .catch(error => {
             console.log('Error: ', error);
