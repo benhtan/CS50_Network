@@ -12,6 +12,32 @@ from .models import User, Post, PostForm
 
 from .helpers import duration, paginate_post
 
+def like_unlike(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Log In Required"}, status=403)
+    
+    if request.method != 'PUT':
+        return JsonResponse({"error": "PUT Required"}, status=405)
+
+    data = json.loads(request.body)
+
+    try:
+        post_obj = Post.objects.get(pk = data['postid'])
+    except:
+        return JsonResponse({"error": "Cannot get post from DB"}, status=500)
+
+    try:
+        if request.user in post_obj.likes.all():
+            # remove user from likes list
+            post_obj.likes.remove(request.user)
+        else:
+            # add user to likes list
+            post_obj.likes.add(request.user)
+    except:
+        return JsonResponse({"error": "Cannot update likes from post object"}, status=500)
+
+    return JsonResponse({"message": "Sucess liking/unliking post", "likes_count": post_obj.likes.count()}, status=200)
+
 def edit_save(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Log In Required"}, status=403)

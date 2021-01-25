@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+// add event listener to link/unlike button
 function like_button_listener() {
     const like_div_all = document.querySelectorAll('#like_div');
     like_div_all.forEach(like_div => {
@@ -26,16 +27,46 @@ function like_button_listener() {
     });  
 }
 
+// when link/unlike button clicked, fetch database and change button looks
 function like_unlike(button) {
     // console.log(button)
-    if (button.previousElementSibling) {
-        button.previousElementSibling.style = 'display: block;';
-        button.style = 'display: none;';
-    }
-    else {
-        button.nextElementSibling.style = 'display: block;';
-        button.style = 'display: none;';
-    }
+    //console.log(button.parentElement.dataset.postid);
+
+    // get csrf token
+    const csrftoken = getCookie('csrftoken');
+
+    fetch('like_unlike', {
+        method: 'PUT',
+        headers: { "X-CSRFToken": csrftoken },
+        body: JSON.stringify({postid: button.parentElement.dataset.postid})
+    })
+    .then(response => {
+        if (response.ok) {
+            if (button.previousElementSibling) {
+                button.previousElementSibling.style = 'display: block;';
+                button.style = 'display: none;';
+            }
+            else {
+                button.nextElementSibling.style = 'display: block;';
+                button.style = 'display: none;';
+            }
+
+            response.json().then(json => {
+                button.parentElement.previousElementSibling.innerHTML = `${json.likes_count} likes`
+            });
+        }
+        else {
+            response.json().then(json => {
+                console.log(json)
+            });
+        }
+    })
+    .catch(error => {
+        console.log('Error: ', error);
+    });
+
+
+    
 }
 
 // function to add event listener for all edit links

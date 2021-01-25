@@ -36,7 +36,7 @@
                     <div class="col" id="post{{post.id}}">{{ post.post_content }}</div>
                 </div>
                 <div class="row">
-                    <div class="col">{{ post.likes.all.count}} likes</div>
+                    <div class="col" id="likes_count">{{ post.likes.all.count}} likes</div>
 
                     <div class="col" id="like_div" data-postid="{{post.id}}">
                         <img src="{% static 'network/heart.svg' %}" id="heart" class="pointer" style="display: {% if user in post.likes.all %} none {% else %} block {% endif %};">
