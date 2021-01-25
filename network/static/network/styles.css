@@ -12,6 +12,8 @@
     font-weight: bold;
 }
 
+.pointer {cursor: pointer;}
+
 .test {
     padding-left: 1em;
 }

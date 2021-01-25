@@ -11,7 +11,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     edit_link_listener();
 
+    like_button_listener();
+
 });
+
+function like_button_listener() {
+    const like_div_all = document.querySelectorAll('#like_div');
+    like_div_all.forEach(like_div => {
+        Array.from(like_div.children).forEach(child => {
+            child.addEventListener('click', function() {
+                like_unlike(this);
+            });
+        });
+    });  
+}
+
+function like_unlike(button) {
+    // console.log(button)
+    if (button.previousElementSibling) {
+        button.previousElementSibling.style = 'display: block;';
+        button.style = 'display: none;';
+    }
+    else {
+        button.nextElementSibling.style = 'display: block;';
+        button.style = 'display: none;';
+    }
+}
 
 // function to add event listener for all edit links
 function edit_link_listener() {

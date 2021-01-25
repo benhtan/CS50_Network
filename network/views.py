@@ -39,7 +39,7 @@ def following(request):
     # query list of user that logged in user is following
     following = request.user.following.all()
     # get posts only from following list
-    posts = Post.objects.filter(user__in=following).order_by('-edited_timestamp')
+    posts = Post.objects.filter(user__in=following).order_by('-created_timestamp')
 
     # paginate post
     p = paginate_post(posts, request.GET.get('pg'))
@@ -90,7 +90,7 @@ def user_profile(request, username):
     try:
         user_obj = User.objects.get(username=username)
         followers = user_obj.followers.all()
-        posts = Post.objects.filter(user = user_obj).order_by('-edited_timestamp')
+        posts = Post.objects.filter(user = user_obj).order_by('-created_timestamp')
         #print(followers)
         #print(user_posts)
     except User.DoesNotExist:
@@ -120,7 +120,7 @@ def index(request):
             return HttpResponseRedirect(reverse("index"))
 
     # Query all posts
-    posts = Post.objects.order_by('-edited_timestamp')
+    posts = Post.objects.order_by('-created_timestamp')
     #print(posts)
 
     # In case we want to display duration, not timestamp

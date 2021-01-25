@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div class="container">
@@ -29,17 +30,26 @@
             <div class="container">
                 <div class="row">
                     <div class="col allPostUsername"><a href="{% url 'user' post.user.username %}">{{ post.user.username }}</a></div>
-                    <div class="col allPostTimestamp">{{ post.edited_timestamp }}</div>
+                    <div class="col allPostTimestamp">{{ post.created_timestamp }}</div>
                 </div>
                 <div class="row" id="content_row{{post.id}}">
                     <div class="col" id="post{{post.id}}">{{ post.post_content }}</div>
                 </div>
                 <div class="row">
-                    <div class="col">Likes: {{ post.likes.all.count}}</div>
+                    <div class="col">{{ post.likes.all.count}} likes</div>
+
+                    <div class="col" id="like_div" data-postid="{{post.id}}">
+                        <img src="{% static 'network/heart.svg' %}" id="heart" class="pointer" style="display: {% if user in post.likes.all %} none {% else %} block {% endif %};">
+                        <img src="{% static 'network/heart-fill.svg' %}" id="heart-fill" class="pointer" style="display: {% if user in post.likes.all %} block {% else %} none {% endif %};">
+                    </div>
                 
-                {% if post.user == user %}
-                        <div class="col" id="edit_div{{post.id}}"><a href="#" onclick="return false;" id="edit_post_link" data-postid="{{post.id}}">Edit</a></div>
-                {% endif %}
+                
+                    <div class="col" id="edit_div{{post.id}}">
+                        {% if post.user == user %}
+                            <a href="#" onclick="return false;" id="edit_post_link" data-postid="{{post.id}}">Edit</a>
+                        {% endif %}
+                    </div>
+                
                 </div>
                 
             </div>
